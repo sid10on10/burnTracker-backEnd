@@ -12,6 +12,22 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/verify',authenticate,async function(req,res){
+  try{
+    client = await mongodClient.connect(url)
+    let db = client.db("burntracker")
+    let token = req.headers.authorization
+    let user = jwt.verify(token,process.env.Secret)
+    let userId = user.id
+    let userData = await db.collection("users").findOne({_id:mongodb.ObjectId(userId)})
+    let userName = userData.name
+    res.json({message:"Valid",userName,userId})
+    
+  } catch (error) {
+    client.close()
+    console.log(error)
+  }
+})
 
 router.get('/dashboard',authenticate, async function(req, res, next) {
   let client
@@ -28,6 +44,7 @@ router.get('/dashboard',authenticate, async function(req, res, next) {
       email:userData.email
     })
   } catch (error) {
+    client.close()
     console.log(error)
   }
 });

@@ -11,11 +11,10 @@ var authenticate=function(req,res,next){
                 next();
             })
 
-}
-else{
-    res.json({
-        message:"Token not present"
-    })
-}
+        }else{
+            res.json({
+                message:"Token not present"
+            })
+        }
 }
 module.exports={authenticate}
